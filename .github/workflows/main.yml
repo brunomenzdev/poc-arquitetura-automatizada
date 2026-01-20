@@ -1,0 +1,76 @@
+name: Living Documentation
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:15
+        env:
+          POSTGRES_DB: livingdocdb
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Install EF Tool
+      run: dotnet tool install --global dotnet-ef --version 8.0.11
+
+    - name: Create Migrations
+      run: |
+        dotnet ef migrations add InitialCreate --project LivingDoc.Api/LivingDoc.Api.csproj
+        dotnet ef database update --project LivingDoc.Api/LivingDoc.Api.csproj
+      env:
+        ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=livingdocdb;Username=postgres;Password=postgres"
+
+    # MER Generation using SchemaSpy
+    - name: Generate MER (SchemaSpy)
+      run: |
+        mkdir -p docs/mer
+        docker run --network="host" -v "$PWD/docs/mer:/output" schemaspy/schemaspy:6.1.0 \
+          -t pgsql \
+          -host localhost \
+          -port 5432 \
+          -db livingdocdb \
+          -u postgres \
+          -p postgres \
+          -noads \
+          -norows
+    
+    # C4 Generation using Structurizr CLI
+    - name: Generate C4 Diagrams
+      run: |
+        docker run --rm -v "$PWD/docs:/usr/local/structurizr" structurizr/cli:latest \
+          export -workspace workspace.dsl -format plantuml
+        
+        # Note: To convert PlantUML to PNG/SVG, you would typically use a PlantUML server or CLI.
+        # For this POC, we generate the .puml files which are text-based diagrams.
+
+    - name: Commit and Push Docs
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add docs/
+        git commit -m "docs: skip-ci update living documentation [skip ci]" || echo "No changes to commit"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
