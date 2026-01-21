@@ -3,52 +3,22 @@ title <size:24>System Context View: LivingDoc System</size>
 
 set separator none
 left to right direction
-skinparam ranksep 60
-skinparam nodesep 30
-hide stereotype
 
 <style>
   root {
-    BackgroundColor: #ffffff;
-    FontColor: #444444;
-  }
-  // Element,Person
-  .Element-RWxlbWVudCxQZXJzb24= {
-    BackgroundColor: #08427b;
-    LineColor: #052e56;
-    LineStyle: 0;
-    LineThickness: 2;
-    FontColor: #ffffff;
-    FontSize: 24;
-    HorizontalAlignment: center;
-    Shadowing: 0;
-    MaximumWidth: 450;
-  }
-  // Element,Software System
-  .Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0= {
-    BackgroundColor: #1168bd;
-    LineColor: #0b4884;
-    LineStyle: 0;
-    LineThickness: 2;
-    FontColor: #ffffff;
-    FontSize: 24;
-    HorizontalAlignment: center;
-    Shadowing: 0;
-    MaximumWidth: 450;
-  }
-  // Relationship
-  .Relationship-UmVsYXRpb25zaGlw {
-    LineThickness: 2;
-    LineStyle: 10-10;
-    LineColor: #444444;
-    FontColor: #444444;
-    FontSize: 24;
+    BackgroundColor: #ffffff
+    FontColor: #444444
   }
 </style>
 
-person "==Usuário\n<size:16>[Person]</size>\n\nUm usuário do sistema que realiza pedidos." <<Element-RWxlbWVudCxQZXJzb24=>> as Usuário
-rectangle "==LivingDoc System\n<size:16>[Software System]</size>\n\nSistema de exemplo para documentação viva." <<Element-RWxlbWVudCxTb2Z0d2FyZSBTeXN0ZW0=>> as LivingDocSystem
+!include <C4/C4>
+!include <C4/C4_Context>
 
-Usuário --> LivingDocSystem <<Relationship-UmVsYXRpb25zaGlw>> : "Faz requisições para\n<size:16>[HTTPS]</size>"
+Person(Usuário, "Usuário", $descr="Um usuário do sistema que realiza pedidos.", $tags="", $link="")
+System(LivingDocSystem, "LivingDoc System", $descr="Sistema de exemplo para documentação viva.", $tags="", $link="")
 
+Rel(Usuário, LivingDocSystem, "Faz requisições para", $techn="HTTPS", $tags="", $link="")
+
+SHOW_LEGEND(true)
+hide stereotypes
 @enduml

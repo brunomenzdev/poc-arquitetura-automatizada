@@ -8,31 +8,5 @@
             <column ascending="true" name="MigrationId"/>
          </index>
       </table>
-      <table name="Orders" remarks="" schema="public" type="TABLE">
-         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="Id" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
-         <column autoUpdated="false" defaultValue="null" digits="6" id="1" name="OrderDate" nullable="false" remarks="" size="35" type="timestamptz" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="2" id="2" name="TotalAmount" nullable="false" remarks="" size="18" type="numeric" typeCode="2"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="UserId" nullable="false" remarks="" size="10" type="int4" typeCode="4">
-            <parent column="Id" foreignKey="FK_Orders_Users_UserId" implied="false" onDeleteCascade="true" schema="public" table="Users"/>
-         </column>
-         <primaryKey column="Id" sequenceNumberInPK="1"/>
-         <index name="PK_Orders" unique="true">
-            <column ascending="true" name="Id"/>
-         </index>
-         <index name="IX_Orders_UserId" unique="false">
-            <column ascending="true" name="UserId"/>
-         </index>
-      </table>
-      <table name="Users" remarks="" schema="public" type="TABLE">
-         <column autoUpdated="true" defaultValue="null" digits="0" id="0" name="Id" nullable="false" remarks="" size="10" type="int4" typeCode="4">
-            <child column="UserId" foreignKey="FK_Orders_Users_UserId" implied="false" onDeleteCascade="true" schema="public" table="Orders"/>
-         </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="Name" nullable="false" remarks="" size="100" type="varchar" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="Email" nullable="false" remarks="" size="150" type="varchar" typeCode="12"/>
-         <primaryKey column="Id" sequenceNumberInPK="1"/>
-         <index name="PK_Users" unique="true">
-            <column ascending="true" name="Id"/>
-         </index>
-      </table>
    </tables>
 </database>
