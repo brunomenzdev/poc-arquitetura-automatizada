@@ -51,7 +51,7 @@ jobs:
     - name: Generate OpenAPI Spec (Swagger)
       run: |
         mkdir -p docs/api
-        dotnet tool run dotnet-swagger tofile --output docs/api/swagger.json LivingDoc.Api/bin/Release/net8.0/LivingDoc.Api.dll v1
+        dotnet tool run swagger tofile --output docs/api/swagger.json LivingDoc.Api/bin/Release/net8.0/LivingDoc.Api.dll v1
 
     # 3. MER Generation (SchemaSpy)
     - name: Generate MER (SchemaSpy)

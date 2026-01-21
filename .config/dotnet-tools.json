@@ -11,7 +11,7 @@
         "swashbuckle.aspnetcore.cli": {
             "version": "6.5.0",
             "commands": [
-                "dotnet-swagger"
+                "swagger"
             ]
         }
     }
