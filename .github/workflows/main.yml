@@ -47,7 +47,7 @@ jobs:
     - name: Generate MER (SchemaSpy)
       run: |
         mkdir -p docs/mer
-        docker run --network="host" -v "$PWD/docs/mer:/output" schemaspy/schemaspy:6.1.0 \
+        docker run --user $(id -u):$(id -g) --network="host" -v "$PWD/docs/mer:/output" schemaspy/schemaspy:6.2.4 \
           -t pgsql \
           -host localhost \
           -port 5432 \
