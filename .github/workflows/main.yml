@@ -40,6 +40,7 @@ jobs:
       run: |
         dotnet tool install --global dotnet-ef --version 8.0.11
         dotnet tool install --global Swashbuckle.AspNetCore.Cli --version 6.5.0
+        echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
     - name: Build Project
       run: dotnet build LivingDoc.Api/LivingDoc.Api.csproj -c Release
@@ -53,10 +54,6 @@ jobs:
     - name: Generate OpenAPI Spec (Swagger)
       run: |
         mkdir -p docs/api
-        # Adicione o caminho das ferramentas ao PATH para esta sessão
-        export PATH="$PATH:$HOME/.dotnet/tools"
-        
-        # O comando correto para a ferramenta instalada via 'dotnet tool'
         dotnet swagger tofile --output docs/api/swagger.json LivingDoc.Api/bin/Release/net8.0/LivingDoc.Api.dll v1
 
     # 3. MER Generation (SchemaSpy)
