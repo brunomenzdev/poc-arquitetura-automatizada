@@ -50,11 +50,13 @@ jobs:
       env:
         ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=livingdocdb;Username=postgres;Password=postgres"
 
-    # 2. Geração do Swagger (Documentação Técnica API)
     - name: Generate OpenAPI Spec (Swagger)
       run: |
         mkdir -p docs/api
-        # Gera o JSON a partir da DLL compilada
+        # Adicione o caminho das ferramentas ao PATH para esta sessão
+        export PATH="$PATH:$HOME/.dotnet/tools"
+        
+        # O comando correto para a ferramenta instalada via 'dotnet tool'
         dotnet swagger tofile --output docs/api/swagger.json LivingDoc.Api/bin/Release/net8.0/LivingDoc.Api.dll v1
 
     # 3. MER Generation (SchemaSpy)
