@@ -52,6 +52,8 @@ jobs:
       run: |
         mkdir -p docs/api
         dotnet tool run swagger tofile --output docs/api/swagger.json LivingDoc.Api/bin/Release/net8.0/LivingDoc.Api.dll v1
+      env:
+        DOTNET_ROLL_FORWARD: Major
 
     # 3. MER Generation (SchemaSpy)
     - name: Generate MER (SchemaSpy)
