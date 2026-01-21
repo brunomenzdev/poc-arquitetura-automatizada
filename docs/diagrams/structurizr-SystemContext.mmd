@@ -1,0 +1,14 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["System Context View: LivingDoc System"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    1["<div style='font-weight: bold'>Usuário</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Um usuário do sistema que<br />realiza pedidos.</div>"]
+    style 1 fill:#08427b,stroke:#052e56,color:#ffffff
+    2["<div style='font-weight: bold'>LivingDoc System</div><div style='font-size: 70%; margin-top: 0px'>[Software System]</div><div style='font-size: 80%; margin-top:10px'>Sistema de exemplo para<br />documentação viva.</div>"]
+    style 2 fill:#1168bd,stroke:#0b4884,color:#ffffff
+
+    1-. "<div>Faz requisições para</div><div style='font-size: 70%'>[HTTPS]</div>" .->2
+
+  end

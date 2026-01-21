@@ -1,0 +1,22 @@
+graph LR
+  linkStyle default fill:#ffffff
+
+  subgraph diagram ["Container View: LivingDoc System"]
+    style diagram fill:#ffffff,stroke:#ffffff
+
+    1["<div style='font-weight: bold'>Usuário</div><div style='font-size: 70%; margin-top: 0px'>[Person]</div><div style='font-size: 80%; margin-top:10px'>Um usuário do sistema que<br />realiza pedidos.</div>"]
+    style 1 fill:#08427b,stroke:#052e56,color:#ffffff
+
+    subgraph 2 ["LivingDoc System"]
+      style 2 fill:#ffffff,stroke:#0b4884,color:#0b4884
+
+      3["<div style='font-weight: bold'>Web API</div><div style='font-size: 70%; margin-top: 0px'>[Container: ASP.NET Core]</div><div style='font-size: 80%; margin-top:10px'>API desenvolvida em .NET 8.</div>"]
+      style 3 fill:#438dd5,stroke:#2e6295,color:#ffffff
+      4[("<div style='font-weight: bold'>Database</div><div style='font-size: 70%; margin-top: 0px'>[Container: PostgreSQL]</div><div style='font-size: 80%; margin-top:10px'>Armazena dados de usuários e<br />pedidos.</div>")]
+      style 4 fill:#438dd5,stroke:#2e6295,color:#ffffff
+    end
+
+    1-. "<div>Faz requisições para</div><div style='font-size: 70%'>[HTTPS]</div>" .->3
+    3-. "<div>Lê e escreve dados em</div><div style='font-size: 70%'>[EF Core]</div>" .->4
+
+  end
