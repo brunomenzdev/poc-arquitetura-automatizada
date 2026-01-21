@@ -35,52 +35,55 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
-    - name: Install EF Tool
-      run: dotnet tool install --global dotnet-ef --version 8.0.11
-
-    - name: Create Migrations
+    # 1. Preparação e Migrations
+    - name: Install EF and Swagger Tools
       run: |
-        dotnet ef migrations add InitialCreate --project LivingDoc.Api/LivingDoc.Api.csproj
+        dotnet tool install --global dotnet-ef --version 8.0.11
+        dotnet tool install --global Swashbuckle.AspNetCore.Cli --version 6.5.0
+
+    - name: Build Project
+      run: dotnet build LivingDoc.Api/LivingDoc.Api.csproj -c Release
+
+    - name: Update Database (MER Source)
+      run: |
         dotnet ef database update --project LivingDoc.Api/LivingDoc.Api.csproj
       env:
         ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=livingdocdb;Username=postgres;Password=postgres"
 
-    # MER Generation using SchemaSpy
+    # 2. Geração do Swagger (Documentação Técnica API)
+    - name: Generate OpenAPI Spec (Swagger)
+      run: |
+        mkdir -p docs/api
+        # Gera o JSON a partir da DLL compilada
+        dotnet swagger tofile --output docs/api/swagger.json LivingDoc.Api/bin/Release/net8.0/LivingDoc.Api.dll v1
+
+    # 3. MER Generation (SchemaSpy)
     - name: Generate MER (SchemaSpy)
       run: |
         mkdir -p docs/mer
         docker run --user $(id -u):$(id -g) --network="host" -v "$PWD/docs/mer:/output" schemaspy/schemaspy:6.2.4 \
-          -t pgsql \
-          -host localhost \
-          -port 5432 \
-          -db livingdocdb \
-          -u postgres \
-          -p postgres \
-          -noads \
-          -norows
-    
-    - name: Generate Diagrams
+          -t pgsql -host localhost -port 5432 -db livingdocdb -u postgres -p postgres -noads -norows
+
+    # 4. C4 Diagrams (Structurizr + PlantUML)
+    - name: Generate C4 Diagrams
       run: |
         mkdir -p docs/diagrams
-        # Exporta PlantUML
+        # Exporta para PlantUML usando o padrão C4 (mais visual)
         docker run --rm -v "$PWD/docs:/usr/local/structurizr" structurizr/cli:latest \
-          export -workspace workspace.dsl -format plantuml -output diagrams
+          export -workspace workspace.dsl -format plantuml/c4plantuml -output diagrams
         
-        # Converte para Imagem
+        # Converte os arquivos .puml resultantes em imagens SVG
         docker run --rm -v "$PWD/docs/diagrams:/data" plantuml/plantuml -tsvg "/data/**.puml"
         
-        # Exporta Mermaid (para colar no README se quiser)
+        # Opcional: Exporta Mermaid para visualização nativa no GitHub
         docker run --rm -v "$PWD/docs:/usr/local/structurizr" structurizr/cli:latest \
           export -workspace workspace.dsl -format mermaid -output diagrams
 
-        # Exporta Draw.io
-        docker run --rm -v "$PWD/docs:/usr/local/structurizr" structurizr/cli:latest \
-          export -workspace workspace.dsl -format drawio -output docs/drawio
-
+    # 5. Persistência dos resultados
     - name: Commit and Push Docs
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add docs/          
-        git commit -m "docs: auto-update documentation [skip ci]" || echo "No changes to commit"
+        git add docs/
+        git commit -m "docs: automated update of MER, C4 and Swagger [skip ci]" || echo "No changes to commit"
         git push
