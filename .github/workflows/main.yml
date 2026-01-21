@@ -36,26 +36,22 @@ jobs:
         dotnet-version: 8.0.x
 
     # 1. Preparação e Migrations
-    - name: Install EF and Swagger Tools
-      run: |
-        dotnet tool install --global dotnet-ef --version 8.0.11
-        dotnet tool install --global Swashbuckle.AspNetCore.Cli --version 6.5.0
-        echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
+    - name: Restore Tools
+      run: dotnet tool restore
 
     - name: Build Project
       run: dotnet build LivingDoc.Api/LivingDoc.Api.csproj -c Release
 
     - name: Update Database (MER Source)
       run: |
-        dotnet ef database update --project LivingDoc.Api/LivingDoc.Api.csproj
+        dotnet tool run dotnet-ef database update --project LivingDoc.Api/LivingDoc.Api.csproj
       env:
         ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=livingdocdb;Username=postgres;Password=postgres"
 
     - name: Generate OpenAPI Spec (Swagger)
       run: |
-        export PATH="$PATH:$HOME/.dotnet/tools"
         mkdir -p docs/api
-        dotnet swagger tofile --output docs/api/swagger.json LivingDoc.Api/bin/Release/net8.0/LivingDoc.Api.dll v1
+        dotnet tool run dotnet-swagger tofile --output docs/api/swagger.json LivingDoc.Api/bin/Release/net8.0/LivingDoc.Api.dll v1
 
     # 3. MER Generation (SchemaSpy)
     - name: Generate MER (SchemaSpy)
