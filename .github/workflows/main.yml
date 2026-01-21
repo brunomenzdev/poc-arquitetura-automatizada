@@ -53,6 +53,7 @@ jobs:
 
     - name: Generate OpenAPI Spec (Swagger)
       run: |
+        export PATH="$PATH:$HOME/.dotnet/tools"
         mkdir -p docs/api
         dotnet swagger tofile --output docs/api/swagger.json LivingDoc.Api/bin/Release/net8.0/LivingDoc.Api.dll v1
 
