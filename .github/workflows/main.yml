@@ -59,14 +59,23 @@ jobs:
           -noads \
           -norows
     
-    # C4 Generation using Structurizr CLI
-    - name: Generate C4 Diagrams
+    - name: Generate Diagrams
       run: |
+        mkdir -p docs/diagrams
+        # Exporta PlantUML
         docker run --rm -v "$PWD/docs:/usr/local/structurizr" structurizr/cli:latest \
-          export -workspace workspace.dsl -format plantuml
+          export -workspace workspace.dsl -format plantuml -output diagrams
         
-        # Note: To convert PlantUML to PNG/SVG, you would typically use a PlantUML server or CLI.
-        # For this POC, we generate the .puml files which are text-based diagrams.
+        # Converte para Imagem
+        docker run --rm -v "$PWD/docs/diagrams:/data" plantuml/plantuml -tsvg "/data/**.puml"
+        
+        # Exporta Mermaid (para colar no README se quiser)
+        docker run --rm -v "$PWD/docs:/usr/local/structurizr" structurizr/cli:latest \
+          export -workspace workspace.dsl -format mermaid -output diagrams
+
+        # Exporta Draw.io
+        docker run --rm -v "$PWD/docs:/usr/local/structurizr" structurizr/cli:latest \
+          export -workspace workspace.dsl -format drawio -output docs/drawio
 
     - name: Commit and Push Docs
       run: |
