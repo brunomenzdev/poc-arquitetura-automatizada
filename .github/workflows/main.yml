@@ -66,12 +66,12 @@ jobs:
         # Note: To convert PlantUML to PNG/SVG, you would typically use a PlantUML server or CLI.
         # For this POC, we generate the .puml files which are text-based diagrams.
 
-    - name: Commit and Push Docs
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add docs/
-        git commit -m "docs: skip-ci update living documentation [skip ci]" || echo "No changes to commit"
-        git push
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Commit and Push Docs
+    #   run: |
+    #     git config --local user.email "action@github.com"
+    #     git config --local user.name "GitHub Action"
+    #     git add docs/
+    #     git commit -m "docs: skip-ci update living documentation [skip ci]" || echo "No changes to commit"
+    #     git push
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
